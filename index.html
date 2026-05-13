@@ -505,7 +505,13 @@
 
       .footer-grid { gap: 2.5rem; }
     }
-  </style>
+  
+    /* ── Language Toggle ── */
+    .lang-toggle { display:flex;align-items:center;gap:0;border:1.5px solid var(--green);border-radius:6px;overflow:hidden; }
+    .lang-btn { background:transparent;border:none;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.8px;color:var(--gray);transition:background 0.2s,color 0.2s;font-family:var(--sans); }
+    .lang-btn.active { background:var(--green);color:#fff; }
+    .lang-btn:hover:not(.active) { background:var(--green-light); }
+</style>
 </head>
 <body>
 
@@ -515,12 +521,13 @@
 <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
   <a href="#home" class="nav-logo">Antico Pizza</a>
   <ul class="nav-links" role="list">
-    <li><a href="#menu">Menu</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#order">Order</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="https://anticopizza.be" target="_blank" rel="noopener" class="nav-cta">Order Now</a></li>
+    <li><a href="#menu"><span data-lang="nav_menu">Menu</span></a></li>
+    <li><a href="#about"><span data-lang="nav_about">About</span></a></li>
+    <li><a href="#order"><span data-lang="nav_order">Order</span></a></li>
+    <li><a href="#contact"><span data-lang="nav_contact">Contact</span></a></li>
+    <li><a href="https://anticopizza.be" target="_blank" rel="noopener" class="nav-cta"><span data-lang="nav_cta">Order Now</span></a></li>
   </ul>
+  <div class="lang-toggle" id="langToggle" style="margin-right:8px"><button class="lang-btn" data-lang="nl">NL</button><button class="lang-btn active" data-lang="en">EN</button></div>
   <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">
     <span></span><span></span><span></span>
   </div>
@@ -535,7 +542,7 @@
   <a href="#about" class="mobile-link">About</a>
   <a href="#order" class="mobile-link">Order</a>
   <a href="#contact" class="mobile-link">Contact</a>
-  <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-primary">Order Now</a>
+  <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-primary"><span data-lang="nav_cta">Order Now</span></a>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -742,12 +749,12 @@
         <table class="hours-table" aria-label="Opening hours">
           <tbody>
             <tr>
-              <td>Monday – Tuesday</td>
-              <td>17:30 – 22:00</td>
+              <td data-lang="h_day1">Monday – Tuesday</td>
+              <td><span data-lang="h_hours1">17:30 – 22:00</span></td>
             </tr>
             <tr>
-              <td>Wednesday – Sunday</td>
-              <td>12:00 – 14:00<br>17:30 – 22:00</td>
+              <td data-lang="h_day2">Wednesday – Sunday</td>
+              <td><span data-lang="h_hours2">17:30 – 22:00</span></td>
             </tr>
           </tbody>
         </table>
@@ -928,6 +935,39 @@
     heroEl.style.background = 'linear-gradient(150deg, #003d22 0%, #005c36 45%, #009f5a 100%)';
   };
   probe.src = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=100&q=10';
+</script>
+
+<script>
+const APLANG = {
+  nl: {
+    nav_menu:'Menu', nav_about:'Over ons', nav_order:'Bestellen',
+    nav_contact:'Contact', nav_cta:'Bestel nu',
+    h_day1:'Ma – Di', h_day2:'Wo – Zo',
+    h_hours1:'17:30 – 22:00', h_hours2:'17:30 – 22:00'
+  },
+  en: {
+    nav_menu:'Menu', nav_about:'About', nav_order:'Order',
+    nav_contact:'Contact', nav_cta:'Order Now',
+    h_day1:'Mon – Tue', h_day2:'Wed – Sun',
+    h_hours1:'17:30 – 22:00', h_hours2:'17:30 – 22:00'
+  }
+};
+let apLang = localStorage.getItem('ap-lang') || 'en';
+function apSetLang(l) {
+  apLang = l;
+  const d = APLANG[l];
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    if (d[el.dataset.lang] !== undefined) el.innerHTML = d[el.dataset.lang];
+  });
+  document.querySelectorAll('#langToggle .lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  document.documentElement.lang = l;
+  localStorage.setItem('ap-lang', l);
+}
+document.getElementById('langToggle').addEventListener('click', e => {
+  const b = e.target.closest('.lang-btn');
+  if (b) apSetLang(b.dataset.lang);
+});
+apSetLang(apLang);
 </script>
 </body>
 </html>
