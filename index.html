@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antico Pizza — Authentic Neapolitan Pizza · Leuven</title>
+  <meta name="description" content="Authentic Neapolitan pizza in Leuven. Hand-crafted sourdough, wood-fired oven. Muntstraat 16 · +32 (0)16 15 24 32">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ── CSS Custom Properties ── */
+    :root {
+      --green:       #00c16e;
+      --green-dark:  #009f5a;
+      --green-deep:  #006640;
+      --green-light: #e8faf2;
+      --white:       #ffffff;
+      --black:       #1a1a1a;
+      --gray:        #666666;
+      --gray-light:  #f5f5f5;
+      --footer-bg:   #111111;
+      --serif:       'Playfair Display', Georgia, serif;
+      --sans:        'Inter', system-ui, sans-serif;
+      --radius:      1rem;
+      --transition:  0.25s ease;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--black); background: var(--white); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--sans); }
+
+    /* ══════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.25rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s, box-shadow 0.4s, padding 0.4s;
+    }
+    .navbar.scrolled {
+      background: rgba(255,255,255,0.97);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+      padding: 0.9rem 3rem;
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--white); letter-spacing: 0.02em;
+      transition: color 0.35s;
+    }
+    .navbar.scrolled .nav-logo { color: var(--black); }
+
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: rgba(255,255,255,0.88);
+      transition: color var(--transition);
+    }
+    .navbar.scrolled .nav-links a { color: var(--black); }
+    .nav-links a:hover { color: var(--green); }
+    .nav-cta {
+      background: var(--green) !important;
+      color: var(--white) !important;
+      padding: 0.6rem 1.5rem !important;
+      border-radius: 2rem;
+      transition: background var(--transition), transform var(--transition) !important;
+    }
+    .nav-cta:hover { background: var(--green-dark) !important; transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--white); border-radius: 2px;
+      transition: background 0.35s, transform 0.3s, opacity 0.3s;
+    }
+    .navbar.scrolled .hamburger span { background: var(--black); }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile overlay nav */
+    .mobile-nav {
+      display: none; position: fixed; inset: 0;
+      background: var(--white); z-index: 999;
+      flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav-close {
+      position: absolute; top: 1.75rem; right: 2rem;
+      font-size: 1.25rem; cursor: pointer; color: var(--gray);
+      transition: color var(--transition);
+    }
+    .mobile-nav-close:hover { color: var(--green); }
+    .mobile-nav a {
+      font-family: var(--serif); font-size: 2rem; color: var(--black);
+      transition: color var(--transition);
+    }
+    .mobile-nav a:hover { color: var(--green); }
+
+    /* ══════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════ */
+    .btn-primary {
+      display: inline-block;
+      background: var(--green); color: var(--white);
+      padding: 0.85rem 2.25rem; border-radius: 2rem;
+      font-weight: 600; font-size: 0.875rem; letter-spacing: 0.04em;
+      border: none; cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+    .btn-outline {
+      display: inline-block;
+      background: transparent; color: var(--white);
+      padding: 0.85rem 2.25rem; border-radius: 2rem;
+      font-weight: 600; font-size: 0.875rem; letter-spacing: 0.04em;
+      border: 2px solid rgba(255,255,255,0.55);
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+    }
+    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    .btn-white {
+      display: inline-block;
+      background: var(--white); color: var(--green);
+      padding: 0.75rem 2rem; border-radius: 2rem;
+      font-weight: 600; font-size: 0.875rem;
+      border: none; cursor: pointer; text-align: center;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-white:hover { background: var(--green-light); transform: translateY(-2px); }
+
+    /* ══════════════════════════════════════
+       SECTION UTILS
+    ══════════════════════════════════════ */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1160px; margin: 0 auto; }
+    .section-label {
+      display: block; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--serif); font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem); line-height: 1.18;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--gray); font-size: 0.975rem; line-height: 1.75;
+      max-width: 520px;
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      height: 100vh; min-height: 640px;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      background:
+        url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1800&q=85')
+        center / cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(0, 80, 42, 0.72) 0%,
+        rgba(0, 100, 55, 0.60) 45%,
+        rgba(0, 50, 25, 0.80) 100%
+      );
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      max-width: 820px; padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px;
+      background: rgba(255,255,255,0.35);
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.75rem, 7vw, 5.5rem);
+      font-weight: 700; color: var(--white); line-height: 1.12;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 em { font-style: italic; color: #7ef0be; }
+    .hero-sub {
+      font-size: 1.1rem; color: rgba(255,255,255,0.82);
+      margin-bottom: 2.75rem; font-weight: 300; letter-spacing: 0.02em;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.55); font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      z-index: 1;
+    }
+    .scroll-hint i { animation: scrollBounce 2s ease-in-out infinite; }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(7px); }
+    }
+
+    /* ══════════════════════════════════════
+       PHILOSOPHY STRIP
+    ══════════════════════════════════════ */
+    .philosophy {
+      padding: 0; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb;
+      background: var(--white);
+    }
+    .philosophy-grid {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+    }
+    .philosophy-item {
+      padding: 3.5rem 2.5rem; text-align: center;
+      border-right: 1px solid #ebebeb;
+    }
+    .philosophy-item:last-child { border-right: none; }
+    .philosophy-icon { font-size: 2.25rem; margin-bottom: 1rem; display: block; }
+    .philosophy-item h3 {
+      font-family: var(--serif); font-size: 1.1rem; font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .philosophy-item p { font-size: 0.875rem; color: var(--gray); line-height: 1.7; }
+
+    /* ══════════════════════════════════════
+       SIGNATURE PIZZAS
+    ══════════════════════════════════════ */
+    .pizzas { background: var(--green-light); }
+    .pizzas-header { text-align: center; margin-bottom: 3.5rem; }
+    .pizzas-header .section-sub { margin: 0 auto; }
+
+    .pizza-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-bottom: 3rem;
+    }
+    .pizza-card {
+      background: var(--green); color: var(--white);
+      border-radius: var(--radius); padding: 2.75rem 2rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.35s;
+    }
+    .pizza-card::before {
+      content: '';
+      position: absolute; top: -50px; right: -50px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .pizza-card::after {
+      content: '';
+      position: absolute; bottom: -30px; left: -30px;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .pizza-card:hover { transform: translateY(-8px); }
+    .pizza-price {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      background: rgba(255,255,255,0.2); padding: 0.25rem 0.85rem;
+      border-radius: 2rem; margin-bottom: 1.75rem;
+    }
+    .pizza-card h3 {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 700;
+      margin-bottom: 0.75rem; line-height: 1.2;
+    }
+    .pizza-divider { width: 36px; height: 2px; background: rgba(255,255,255,0.35); margin: 0.9rem 0; }
+    .pizza-card p { font-size: 0.875rem; opacity: 0.87; line-height: 1.65; }
+    .pizzas-cta { text-align: center; }
+
+    /* ══════════════════════════════════════
+       ABOUT
+    ══════════════════════════════════════ */
+    .about { background: var(--white); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+    .about-quote {
+      font-family: var(--serif); font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+      font-style: italic; color: var(--green); line-height: 1.35;
+      margin: 2rem 0; padding-left: 1.5rem;
+      border-left: 3px solid var(--green);
+    }
+    .about-text p { color: var(--gray); line-height: 1.8; margin-bottom: 1rem; font-size: 0.975rem; }
+    .about-rating {
+      margin-top: 2rem; display: flex; align-items: center; gap: 1rem;
+      padding-top: 1.5rem; border-top: 1px solid #eee;
+    }
+    .about-rating-stars { display: flex; gap: 3px; }
+    .about-rating-stars i { color: #fbbf24; font-size: 0.9rem; }
+    .about-rating-score { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--black); }
+    .about-rating-label { font-size: 0.8rem; color: var(--gray); }
+
+    .about-visual { position: relative; padding-bottom: 2rem; padding-right: 2rem; }
+    .about-img-frame {
+      border-radius: var(--radius); overflow: hidden;
+      aspect-ratio: 4/5; position: relative;
+      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green) 100%);
+    }
+    .about-img-frame img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .about-img-frame:hover img { transform: scale(1.03); }
+    .about-img-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+    }
+    .about-img-placeholder i { font-size: 5rem; color: rgba(255,255,255,0.2); margin-bottom: 1.5rem; }
+    .about-img-placeholder p { font-family: var(--serif); font-style: italic; font-size: 1.5rem; color: rgba(255,255,255,0.5); }
+    .about-badge {
+      position: absolute; bottom: 1.5rem; right: 0;
+      background: var(--green); color: var(--white);
+      border-radius: 50%; width: 120px; height: 120px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; box-shadow: 0 8px 32px rgba(0,193,110,0.35);
+      border: 4px solid var(--white);
+    }
+    .about-badge strong { font-family: var(--serif); font-size: 2rem; line-height: 1; }
+    .about-badge span { font-size: 0.65rem; letter-spacing: 0.04em; opacity: 0.9; margin-top: 2px; }
+
+    /* ══════════════════════════════════════
+       ORDER & RESERVATION
+    ══════════════════════════════════════ */
+    .order { background: var(--green-light); }
+    .order-header { text-align: center; margin-bottom: 3.5rem; }
+    .order-header .section-sub { margin: 0 auto; }
+
+    .order-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .order-card {
+      background: var(--green); color: var(--white);
+      border-radius: var(--radius); padding: 2.5rem 2rem;
+      display: flex; flex-direction: column;
+    }
+    .order-icon { font-size: 2rem; margin-bottom: 1.25rem; }
+    .order-card h3 { font-family: var(--serif); font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .order-card > p { font-size: 0.875rem; opacity: 0.87; line-height: 1.65; margin-bottom: 1.75rem; flex: 1; }
+
+    /* Reservation form */
+    .reservation-form { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.875rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .reservation-form input,
+    .reservation-form select {
+      width: 100%; padding: 0.7rem 1rem;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 0.6rem;
+      background: rgba(255,255,255,0.15);
+      color: var(--white); font-size: 0.875rem; font-family: var(--sans);
+      outline: none;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .reservation-form input::placeholder { color: rgba(255,255,255,0.6); }
+    .reservation-form select option { color: var(--black); background: var(--white); }
+    .reservation-form input:focus,
+    .reservation-form select:focus {
+      border-color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.22);
+    }
+    .form-success {
+      background: rgba(255,255,255,0.18); border-radius: 0.6rem;
+      padding: 1.1rem; text-align: center; font-size: 0.9rem;
+      display: none; margin-bottom: 0.875rem;
+    }
+    .form-phone { font-size: 0.78rem; opacity: 0.72; }
+    .form-phone a { color: rgba(255,255,255,0.92); }
+
+    /* ══════════════════════════════════════
+       HOURS & CONTACT
+    ══════════════════════════════════════ */
+    .contact { background: var(--white); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+    .hours-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    .hours-table td { padding: 0.8rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; vertical-align: top; }
+    .hours-table td:first-child { color: var(--black); font-weight: 500; min-width: 160px; }
+    .hours-table td:last-child { color: var(--gray); text-align: right; }
+    .hours-table tr:last-child td { border-bottom: none; }
+
+    .contact-info { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
+    .contact-item { display: flex; align-items: flex-start; gap: 0.9rem; }
+    .contact-item i { color: var(--green); font-size: 0.95rem; margin-top: 0.2rem; flex-shrink: 0; width: 16px; }
+    .contact-item p { font-size: 0.9rem; color: var(--gray); line-height: 1.55; }
+    .contact-item a { color: var(--green); }
+    .contact-item a:hover { text-decoration: underline; }
+
+    .contact-map-side { }
+    .contact-map-side h3 { font-family: var(--serif); font-size: 1.4rem; margin-bottom: 1.25rem; }
+    .map-wrapper {
+      border-radius: var(--radius); overflow: hidden;
+      height: 340px; box-shadow: 0 4px 28px rgba(0,0,0,0.08);
+    }
+    .map-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer { background: var(--footer-bg); color: rgba(255,255,255,0.65); padding: 5rem 2rem 0; }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.6fr 1fr;
+      gap: 5rem; padding-bottom: 3.5rem;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 2.25rem; font-weight: 700;
+      color: var(--white); letter-spacing: 0.04em;
+    }
+    .footer-tagline {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-top: 0.2rem; margin-bottom: 1.75rem;
+    }
+    .footer-desc { font-size: 0.875rem; line-height: 1.75; margin-bottom: 2rem; max-width: 360px; }
+    .footer-social { display: flex; gap: 0.75rem; }
+    .footer-social a {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green); font-size: 0.9rem;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+    }
+    .footer-social a:hover {
+      border-color: var(--green); background: rgba(0,193,110,0.12);
+      transform: translateY(-2px);
+    }
+    .footer-locations h4 {
+      font-family: var(--serif); font-size: 1.05rem;
+      color: var(--white); margin-bottom: 1.5rem;
+    }
+    .footer-location { margin-bottom: 1.5rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+    .footer-location i { color: var(--green); font-size: 0.85rem; margin-top: 0.25rem; flex-shrink: 0; }
+    .footer-location p { font-size: 0.875rem; line-height: 1.6; }
+    .footer-bottom {
+      border-top: 1px solid var(--green);
+      padding: 1.4rem 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; color: rgba(255,255,255,0.35);
+      letter-spacing: 0.02em;
+    }
+
+    /* ══════════════════════════════════════
+       SCROLL ANIMATIONS
+    ══════════════════════════════════════ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in-delay-1 { transition-delay: 0.12s; }
+    .fade-in-delay-2 { transition-delay: 0.24s; }
+    .fade-in-delay-3 { transition-delay: 0.36s; }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE — Tablet
+    ══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .navbar { padding: 1rem 1.5rem; }
+      .navbar.scrolled { padding: 0.8rem 1.5rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { order: -1; padding-right: 0; padding-bottom: 1.5rem; }
+      .about-badge { width: 100px; height: 100px; right: 0.5rem; bottom: 0.5rem; }
+      .about-badge strong { font-size: 1.5rem; }
+
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 3rem; }
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE — Mobile
+    ══════════════════════════════════════ */
+    @media (max-width: 680px) {
+      section { padding: 4rem 1.25rem; }
+
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .philosophy-item { border-right: none; border-bottom: 1px solid #ebebeb; padding: 2.5rem 1.5rem; }
+      .philosophy-item:last-child { border-bottom: none; }
+
+      .pizza-grid { grid-template-columns: 1fr; }
+
+      .order-grid { grid-template-columns: 1fr; }
+
+      .hero h1 { font-size: 2.4rem; }
+      .hero-btns { flex-direction: column; align-items: center; }
+
+      .form-row { grid-template-columns: 1fr; }
+
+      .footer-grid { gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+  <a href="#home" class="nav-logo">Antico Pizza</a>
+  <ul class="nav-links" role="list">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#order">Order</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://anticopizza.be" target="_blank" rel="noopener" class="nav-cta">Order Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav" role="dialog" aria-label="Mobile navigation" aria-modal="true">
+  <button class="mobile-nav-close" id="mobileClose" aria-label="Close menu">
+    <i class="fas fa-times"></i>
+  </button>
+  <a href="#menu" class="mobile-link">Menu</a>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#order" class="mobile-link">Order</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+  <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-primary">Order Now</a>
+</div>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero" id="home" aria-label="Hero">
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="hero-content fade-in">
+    <p class="hero-eyebrow">Muntstraat 16 · Leuven, Belgium</p>
+    <h1>L'Arte della<br><em>Pizza Napoletana</em></h1>
+    <p class="hero-sub">Hand-crafted, wood-fired, Muntstraat 16 — Leuven</p>
+    <div class="hero-btns">
+      <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-primary">Order Online</a>
+      <a href="#menu" class="btn-outline">View Menu</a>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">
+    <span>Scroll</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PHILOSOPHY STRIP
+══════════════════════════════════════ -->
+<div class="philosophy" role="region" aria-label="Our philosophy">
+  <div class="philosophy-grid">
+    <div class="philosophy-item fade-in">
+      <span class="philosophy-icon" aria-hidden="true">🔥</span>
+      <h3>Wood-fired Oven</h3>
+      <p>Every pizza baked at 485 °C in our traditional wood-fired oven — creating that signature leopard-spotted crust.</p>
+    </div>
+    <div class="philosophy-item fade-in fade-in-delay-1">
+      <span class="philosophy-icon" aria-hidden="true">⏱</span>
+      <h3>48–72h Sourdough Rest</h3>
+      <p>Our dough ferments for two to three days, developing deep flavour, perfect texture, and natural digestibility.</p>
+    </div>
+    <div class="philosophy-item fade-in fade-in-delay-2">
+      <span class="philosophy-icon" aria-hidden="true">🤌</span>
+      <h3>Hand-opened by Hand</h3>
+      <p>No rolling pins. Each pizza is hand-stretched to preserve the air pockets that define true Neapolitan dough.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SIGNATURE PIZZAS
+══════════════════════════════════════ -->
+<section class="pizzas" id="menu" aria-label="Signature pizzas">
+  <div class="container">
+    <div class="pizzas-header">
+      <span class="section-label">Our Signature</span>
+      <h2 class="section-title">Le Nostre Pizze</h2>
+      <p class="section-sub">Crafted with ingredients sourced directly from family-run businesses across Italy — nothing compromised.</p>
+    </div>
+    <div class="pizza-grid">
+      <div class="pizza-card fade-in">
+        <span class="pizza-price">From €13.50</span>
+        <h3>Margherita</h3>
+        <div class="pizza-divider" aria-hidden="true"></div>
+        <p>Agerola fior di latte · San Marzano tomatoes · Kalamata extra-virgin olive oil · fresh basil</p>
+      </div>
+      <div class="pizza-card fade-in fade-in-delay-1">
+        <span class="pizza-price">From €15.00</span>
+        <h3>Salsiccia &amp; Friarielli</h3>
+        <div class="pizza-divider" aria-hidden="true"></div>
+        <p>Fior di latte · Neapolitan fennel sausage · Friarielli rapini · smoked provola · chilli</p>
+      </div>
+      <div class="pizza-card fade-in fade-in-delay-2">
+        <span class="pizza-price">From €14.00</span>
+        <h3>Végétarienne</h3>
+        <div class="pizza-divider" aria-hidden="true"></div>
+        <p>Seasonal vegetables · fior di latte · San Marzano tomatoes · basil pesto · cold-pressed olive oil</p>
+      </div>
+    </div>
+    <div class="pizzas-cta">
+      <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-primary">View Full Menu</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ABOUT
+══════════════════════════════════════ -->
+<section class="about" id="about" aria-label="About us">
+  <div class="container">
+    <div class="about-grid">
+      <!-- Text -->
+      <div class="about-text fade-in">
+        <span class="section-label">Our Story</span>
+        <h2 class="section-title">Rooted in Neapolitan Tradition</h2>
+        <blockquote class="about-quote">"Passione per la pizza"</blockquote>
+        <p>Antico was born from a single conviction: that the world's greatest pizza deserves the world's finest ingredients, made with patience and respect for tradition. Chef Gioti built direct relationships with family-run producers across Italy — from the volcanic plains of Campania to the olive groves of Calabria.</p>
+        <p>Our San Marzano tomatoes are grown in the shadow of Mount Vesuvius. Our fior di latte comes from Agerola. Our olive oil is cold-pressed Kalamata. Nothing is compromised — ever.</p>
+        <p>Located just 120 metres from Leuven's Grote Markt, steps from Saint Peter's Church — Antico brings Napoli to Belgium's most vibrant university city.</p>
+        <div class="about-rating">
+          <div class="about-rating-stars" aria-hidden="true">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <span class="about-rating-score">4.6</span>
+          <span class="about-rating-label">Google Reviews · Leuven</span>
+        </div>
+      </div>
+      <!-- Visual -->
+      <div class="about-visual fade-in fade-in-delay-1">
+        <div class="about-img-frame">
+          <img
+            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=85"
+            alt="Inside Antico Pizza — wood-fired kitchen atmosphere"
+            loading="lazy"
+            id="aboutImg"
+          >
+          <div class="about-img-placeholder" id="aboutPlaceholder" style="display:none;">
+            <i class="fas fa-pizza-slice" aria-hidden="true"></i>
+            <p>L'arte della pizza</p>
+          </div>
+        </div>
+        <div class="about-badge" aria-label="4.6 star Google rating">
+          <strong>4.6</strong>
+          <span>⭐ Google</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ORDER & RESERVATION
+══════════════════════════════════════ -->
+<section class="order" id="order" aria-label="Order and reservation">
+  <div class="container">
+    <div class="order-header">
+      <span class="section-label">Taste Antico</span>
+      <h2 class="section-title">Order, Pick-Up or Dine</h2>
+      <p class="section-sub">However you prefer to enjoy your pizza, we have you covered — seven days a week.</p>
+    </div>
+    <div class="order-grid">
+
+      <!-- Delivery -->
+      <div class="order-card fade-in">
+        <div class="order-icon" aria-hidden="true">🛵</div>
+        <h3>Delivery</h3>
+        <p>E-bike delivery within 16 minutes cycling distance from Muntstraat 16. Your pizza arrives hot, straight from our wood-fired oven to your door.</p>
+        <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-white">Order Now</a>
+      </div>
+
+      <!-- Pick-Up -->
+      <div class="order-card fade-in fade-in-delay-1">
+        <div class="order-icon" aria-hidden="true">🥡</div>
+        <h3>Pick-Up</h3>
+        <p>Select your time slot online and skip the queue. Your pizza will be ready the moment you arrive at Muntstraat 16. Fast, easy, perfect.</p>
+        <a href="https://anticopizza.be" target="_blank" rel="noopener" class="btn-white">Order Now</a>
+      </div>
+
+      <!-- Reservation -->
+      <div class="order-card fade-in fade-in-delay-2">
+        <div class="order-icon" aria-hidden="true">📅</div>
+        <h3>Reservation</h3>
+        <p>Reserve your table in our white-marble dining room at Muntstraat 16.</p>
+        <form class="reservation-form" id="reservationForm" novalidate aria-label="Table reservation form">
+          <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+          <div class="form-row">
+            <input type="date" name="date" required aria-label="Date">
+            <input type="time" name="time" min="12:00" max="21:30" required aria-label="Time">
+          </div>
+          <select name="guests" required aria-label="Number of guests">
+            <option value="" disabled selected>Number of guests</option>
+            <option value="1">1 guest</option>
+            <option value="2">2 guests</option>
+            <option value="3">3 guests</option>
+            <option value="4">4 guests</option>
+            <option value="5">5 guests</option>
+            <option value="6">6 guests</option>
+            <option value="7">7 guests</option>
+            <option value="8+">8+ guests</option>
+          </select>
+          <button type="submit" class="btn-white">Reserve Table</button>
+        </form>
+        <div class="form-success" id="formSuccess" role="status" aria-live="polite">
+          ✅ Thank you! We'll confirm your reservation soon.
+        </div>
+        <p class="form-phone">Or call us: <a href="tel:+3216152432">+32 (0)16 15 24 32</a></p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     HOURS & CONTACT
+══════════════════════════════════════ -->
+<section class="contact" id="contact" aria-label="Opening hours and contact">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- Hours + info -->
+      <div class="fade-in">
+        <span class="section-label">Visit Us</span>
+        <h2 class="section-title">Hours &amp; Contact</h2>
+        <table class="hours-table" aria-label="Opening hours">
+          <tbody>
+            <tr>
+              <td>Monday – Tuesday</td>
+              <td>17:30 – 22:00</td>
+            </tr>
+            <tr>
+              <td>Wednesday – Sunday</td>
+              <td>12:00 – 14:00<br>17:30 – 22:00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <p>
+              Muntstraat 16, 3000 Leuven, Belgium<br>
+              <small>120 m from Grote Markt · Near Saint Peter's Church</small>
+            </p>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <p><a href="tel:+3216152432">+32 (0)16 15 24 32</a></p>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <p><a href="mailto:info@anticopizza.be">info@anticopizza.be</a></p>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-globe" aria-hidden="true"></i>
+            <p><a href="https://anticopizza.be" target="_blank" rel="noopener">anticopizza.be</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="contact-map-side fade-in fade-in-delay-1">
+        <h3>Find Us</h3>
+        <div class="map-wrapper">
+          <iframe
+            src="https://maps.google.com/maps?q=Muntstraat+16+3000+Leuven+Belgium&output=embed&z=16"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Antico Pizza on Google Maps — Muntstraat 16, Leuven"
+          ></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div>
+        <div class="footer-logo">ANTICO</div>
+        <div class="footer-tagline">Sourdough Pizza</div>
+        <p class="footer-desc">
+          Passione per la pizza — Leuven.<br>
+          Authentic Neapolitan pizza, hand-crafted with love and wood-fired to perfection. Family-sourced Italian ingredients, served with pride since day one.
+        </p>
+        <div class="footer-social" aria-label="Social media links">
+          <a href="https://instagram.com/anticopizzaleuven" target="_blank" rel="noopener" aria-label="Antico Pizza on Instagram">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://facebook.com/anticopizzaleuven" target="_blank" rel="noopener" aria-label="Antico Pizza on Facebook">
+            <i class="fab fa-facebook-f" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Locations -->
+      <div class="footer-locations">
+        <h4>Our Locations</h4>
+        <div class="footer-location">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <p>Muntstraat 16<br>3000 Leuven, Belgium</p>
+        </div>
+        <div class="footer-location">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <p>Hal5, Diestsesteenweg 104<br>Kessel-Lo, Belgium</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Antico Pizza · Leuven, Belgium</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── NAVBAR: transparent → solid on scroll ── */
+  const navbar = document.getElementById('navbar');
+  const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 60);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── HAMBURGER MENU ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileClose = document.getElementById('mobileClose');
+
+  function openMobileNav() {
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    mobileNav.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileNav() {
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () =>
+    mobileNav.classList.contains('open') ? closeMobileNav() : openMobileNav()
+  );
+  hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMobileNav(); } });
+  mobileClose.addEventListener('click', closeMobileNav);
+  document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMobileNav));
+  mobileNav.addEventListener('click', e => { if (e.target === mobileNav) closeMobileNav(); });
+
+  /* ── SCROLL ANIMATIONS (Intersection Observer) ── */
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        fadeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+  /* ── RESERVATION FORM ── */
+  const form = document.getElementById('reservationForm');
+  const formSuccess = document.getElementById('formSuccess');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name   = form.querySelector('[name="name"]').value.trim();
+    const date   = form.querySelector('[name="date"]').value;
+    const time   = form.querySelector('[name="time"]').value;
+    const guests = form.querySelector('[name="guests"]').value;
+
+    if (!name || !date || !time || !guests) {
+      /* Visual feedback: shake each empty field */
+      [form.querySelector('[name="name"]'), form.querySelector('[name="date"]'),
+       form.querySelector('[name="time"]'), form.querySelector('[name="guests"]')]
+        .forEach(field => {
+          if (!field.value.trim()) {
+            field.style.borderColor = 'rgba(255,150,150,0.8)';
+            setTimeout(() => { field.style.borderColor = ''; }, 1200);
+          }
+        });
+      return;
+    }
+
+    form.style.display = 'none';
+    formSuccess.style.display = 'block';
+  });
+
+  /* ── ABOUT IMAGE: show placeholder if image fails ── */
+  const aboutImg = document.getElementById('aboutImg');
+  const aboutPlaceholder = document.getElementById('aboutPlaceholder');
+  if (aboutImg) {
+    aboutImg.addEventListener('error', () => {
+      aboutImg.style.display = 'none';
+      aboutPlaceholder.style.display = 'flex';
+    });
+  }
+
+  /* ── HERO IMAGE FALLBACK: deep green gradient if Unsplash unavailable ── */
+  const heroEl = document.querySelector('.hero');
+  const probe = new Image();
+  probe.onerror = () => {
+    heroEl.style.backgroundImage = 'none';
+    heroEl.style.background = 'linear-gradient(150deg, #003d22 0%, #005c36 45%, #009f5a 100%)';
+  };
+  probe.src = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=100&q=10';
+</script>
+</body>
+</html>
